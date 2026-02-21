@@ -34,7 +34,7 @@ export async function loginAction(
   const password = formData.get("password");
 
   if (!password || typeof password !== "string") {
-    return { error: "Password is required" };
+    return { error: "A senha é obrigatória" };
   }
 
   const ipAddress = await getClientIpAddress();
@@ -42,15 +42,16 @@ export async function loginAction(
 
   if (!rateLimitResult.allowed) {
     return {
-      error: `Too many login attempts. Try again in ${rateLimitResult.retryAfterSeconds} seconds.`,
+      error: `Muitas tentativas. Tente novamente em ${rateLimitResult.retryAfterSeconds} segundos.`,
     };
   }
 
-  const passwordHash = process.env.AUTH_PASSWORD_HASH;
-  if (!passwordHash) {
-    return { error: "Server configuration error" };
+  const encodedHash = process.env.AUTH_PASSWORD_HASH;
+  if (!encodedHash) {
+    return { error: "Erro de configuração do servidor" };
   }
 
+  const passwordHash = Buffer.from(encodedHash, "base64").toString("utf-8");
   const isValid = await compare(password, passwordHash);
 
   if (!isValid) {
@@ -59,8 +60,8 @@ export async function loginAction(
     return {
       error:
         remaining > 0
-          ? `Invalid password. ${remaining} attempt${remaining === 1 ? "" : "s"} remaining.`
-          : "Too many login attempts. Try again in 15 minutes.",
+          ? `Senha incorreta. ${remaining} tentativa${remaining === 1 ? "" : "s"} restante${remaining === 1 ? "" : "s"}.`
+          : "Muitas tentativas. Tente novamente em 15 minutos.",
     };
   }
 

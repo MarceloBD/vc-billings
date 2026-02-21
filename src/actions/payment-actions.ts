@@ -1,12 +1,13 @@
 "use server";
 
-import { eq, and } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
-import { database } from "@/lib/db";
+import { getDatabase } from "@/lib/db";
 import { payments } from "@/lib/db/schema";
 import { getNextMonth } from "@/lib/month-helpers";
 
 export async function getPaymentsByMonth(month: string) {
+  const database = getDatabase();
   return database
     .select()
     .from(payments)
@@ -15,6 +16,7 @@ export async function getPaymentsByMonth(month: string) {
 }
 
 export async function createPayment(formData: FormData) {
+  const database = getDatabase();
   const description = formData.get("description") as string;
   const amount = formData.get("amount") as string;
   const dueDay = parseInt(formData.get("dueDay") as string, 10);
@@ -34,6 +36,7 @@ export async function createPayment(formData: FormData) {
 }
 
 export async function updatePayment(formData: FormData) {
+  const database = getDatabase();
   const id = parseInt(formData.get("id") as string, 10);
   const description = formData.get("description") as string;
   const amount = formData.get("amount") as string;
@@ -55,11 +58,13 @@ export async function updatePayment(formData: FormData) {
 }
 
 export async function deletePayment(paymentId: number) {
+  const database = getDatabase();
   await database.delete(payments).where(eq(payments.id, paymentId));
   revalidatePath("/dashboard");
 }
 
 export async function togglePaymentPaid(paymentId: number, isPaid: boolean) {
+  const database = getDatabase();
   await database
     .update(payments)
     .set({ isPaid, updatedAt: new Date() })
@@ -71,6 +76,7 @@ export async function togglePaymentPaid(paymentId: number, isPaid: boolean) {
 export async function duplicateMonthPayments(
   sourceMonth: string
 ): Promise<{ success: boolean; message: string }> {
+  const database = getDatabase();
   const targetMonth = getNextMonth(sourceMonth);
 
   const existingPayments = await database
@@ -81,7 +87,7 @@ export async function duplicateMonthPayments(
   if (existingPayments.length > 0) {
     return {
       success: false,
-      message: `${targetMonth} already has ${existingPayments.length} payment(s). Delete them first or manage them manually.`,
+      message: `${targetMonth} já possui ${existingPayments.length} pagamento(s). Exclua-os primeiro ou gerencie manualmente.`,
     };
   }
 
@@ -93,7 +99,7 @@ export async function duplicateMonthPayments(
   if (sourcePayments.length === 0) {
     return {
       success: false,
-      message: "No payments found in the current month to duplicate.",
+      message: "Nenhum pagamento encontrado neste mês para duplicar.",
     };
   }
 
@@ -113,6 +119,6 @@ export async function duplicateMonthPayments(
   revalidatePath("/dashboard");
   return {
     success: true,
-    message: `${sourcePayments.length} payment(s) duplicated to ${targetMonth}.`,
+    message: `${sourcePayments.length} pagamento(s) duplicado(s) para ${targetMonth}.`,
   };
 }

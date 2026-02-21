@@ -1,7 +1,7 @@
 import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
 
-const SESSION_COOKIE_NAME = "vc-billings-session";
+const SESSION_COOKIE_NAME = "payflow-session";
 const SESSION_DURATION_SECONDS = 60 * 60 * 24; // 24 hours
 
 function getSecret() {

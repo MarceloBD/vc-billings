@@ -1,7 +1,6 @@
 "use client";
 
-import { useRef, useEffect } from "react";
-import { useTransition } from "react";
+import { useRef, useEffect, useTransition } from "react";
 import { X } from "lucide-react";
 import type { Payment } from "@/lib/db/schema";
 import { createPayment, updatePayment } from "@/actions/payment-actions";
@@ -50,10 +49,6 @@ export function PaymentForm({
     });
   }
 
-  function handleDialogClose() {
-    onClose();
-  }
-
   if (!isOpen) {
     return null;
   }
@@ -61,28 +56,28 @@ export function PaymentForm({
   return (
     <dialog
       ref={dialogRef}
-      onClose={handleDialogClose}
-      className="w-full max-w-md rounded-2xl border border-card-border bg-card p-0 shadow-xl"
+      onClose={onClose}
+      className="w-full max-w-sm rounded-xl border border-border bg-card p-0 shadow-lg"
     >
-      <div className="flex items-center justify-between border-b border-card-border px-6 py-4">
-        <h2 className="text-lg font-bold text-foreground">
-          {editingPayment ? "Edit Payment" : "New Payment"}
+      <div className="flex items-center justify-between border-b border-border px-5 py-3.5">
+        <h2 className="text-sm font-semibold text-foreground">
+          {editingPayment ? "Editar pagamento" : "Novo pagamento"}
         </h2>
         <button
           onClick={onClose}
-          className="flex h-8 w-8 items-center justify-center rounded-lg text-muted transition-colors hover:bg-muted-light hover:text-foreground"
+          className="rounded-md p-1 text-muted transition-colors hover:text-foreground"
         >
           <X className="h-4 w-4" />
         </button>
       </div>
 
-      <form ref={formRef} action={handleSubmit} className="space-y-4 p-6">
+      <form ref={formRef} action={handleSubmit} className="space-y-3 p-5">
         <div>
           <label
             htmlFor="description"
-            className="mb-1.5 block text-sm font-medium text-foreground"
+            className="mb-1 block text-xs font-medium text-foreground"
           >
-            Description
+            Descrição
           </label>
           <input
             id="description"
@@ -90,18 +85,18 @@ export function PaymentForm({
             type="text"
             required
             defaultValue={editingPayment?.description ?? ""}
-            placeholder="e.g. Netflix, Rent, Electricity"
-            className="w-full rounded-xl border border-card-border bg-background px-4 py-2.5 text-sm text-foreground placeholder:text-muted outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary-light"
+            placeholder="Netflix, Aluguel, Energia..."
+            className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted outline-none transition-colors focus:border-foreground"
           />
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 gap-3">
           <div>
             <label
               htmlFor="amount"
-              className="mb-1.5 block text-sm font-medium text-foreground"
+              className="mb-1 block text-xs font-medium text-foreground"
             >
-              Amount ($)
+              Valor (R$)
             </label>
             <input
               id="amount"
@@ -111,16 +106,16 @@ export function PaymentForm({
               min="0"
               required
               defaultValue={editingPayment?.amount ?? ""}
-              placeholder="0.00"
-              className="w-full rounded-xl border border-card-border bg-background px-4 py-2.5 text-sm text-foreground placeholder:text-muted outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary-light"
+              placeholder="0,00"
+              className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted outline-none transition-colors focus:border-foreground"
             />
           </div>
           <div>
             <label
               htmlFor="dueDay"
-              className="mb-1.5 block text-sm font-medium text-foreground"
+              className="mb-1 block text-xs font-medium text-foreground"
             >
-              Due Day
+              Dia de vencimento
             </label>
             <input
               id="dueDay"
@@ -131,7 +126,7 @@ export function PaymentForm({
               required
               defaultValue={editingPayment?.dueDay ?? ""}
               placeholder="1-31"
-              className="w-full rounded-xl border border-card-border bg-background px-4 py-2.5 text-sm text-foreground placeholder:text-muted outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary-light"
+              className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted outline-none transition-colors focus:border-foreground"
             />
           </div>
         </div>
@@ -139,39 +134,38 @@ export function PaymentForm({
         <div>
           <label
             htmlFor="category"
-            className="mb-1.5 block text-sm font-medium text-foreground"
+            className="mb-1 block text-xs font-medium text-muted"
           >
-            Category{" "}
-            <span className="font-normal text-muted">(optional)</span>
+            Categoria (opcional)
           </label>
           <input
             id="category"
             name="category"
             type="text"
             defaultValue={editingPayment?.category ?? ""}
-            placeholder="e.g. Streaming, Housing, Utilities"
-            className="w-full rounded-xl border border-card-border bg-background px-4 py-2.5 text-sm text-foreground placeholder:text-muted outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary-light"
+            placeholder="Streaming, Moradia..."
+            className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted outline-none transition-colors focus:border-foreground"
           />
         </div>
 
-        <div className="flex gap-3 pt-2">
+        <div className="flex gap-2 pt-1">
           <button
             type="button"
             onClick={onClose}
-            className="flex-1 rounded-xl border border-card-border px-4 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-muted-light"
+            className="flex-1 rounded-lg border border-border px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-muted-light"
           >
-            Cancel
+            Cancelar
           </button>
           <button
             type="submit"
             disabled={isPending}
-            className="flex-1 rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-primary-hover disabled:opacity-50"
+            className="flex-1 rounded-lg bg-foreground px-3 py-2 text-sm font-medium text-white transition-opacity hover:opacity-80 disabled:opacity-40"
           >
             {isPending
-              ? "Saving..."
+              ? "Salvando..."
               : editingPayment
-                ? "Update"
-                : "Add Payment"}
+                ? "Atualizar"
+                : "Adicionar"}
           </button>
         </div>
       </form>

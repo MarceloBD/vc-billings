@@ -24,14 +24,14 @@ export function getPreviousMonth(month: string): string {
 export function formatMonthLabel(month: string): string {
   const [year, monthNumber] = month.split("-").map(Number);
   const date = new Date(year, monthNumber - 1);
-  return date.toLocaleDateString("en-US", { month: "long", year: "numeric" });
+  return date.toLocaleDateString("pt-BR", { month: "long", year: "numeric" });
 }
 
 export function formatCurrency(amount: string | number): string {
   const numericAmount =
     typeof amount === "string" ? parseFloat(amount) : amount;
-  return new Intl.NumberFormat("en-US", {
+  return new Intl.NumberFormat("pt-BR", {
     style: "currency",
-    currency: "USD",
+    currency: "BRL",
   }).format(numericAmount);
 }

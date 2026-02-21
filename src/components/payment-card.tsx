@@ -1,7 +1,7 @@
 "use client";
 
 import { useOptimistic, useTransition } from "react";
-import { Check, Pencil, Trash2, Calendar } from "lucide-react";
+import { Check, Pencil, Trash2 } from "lucide-react";
 import type { Payment } from "@/lib/db/schema";
 import { togglePaymentPaid, deletePayment } from "@/actions/payment-actions";
 import { formatCurrency } from "@/lib/month-helpers";
@@ -23,7 +23,7 @@ export function PaymentCard({ payment, onEdit }: PaymentCardProps) {
   }
 
   function handleDelete() {
-    if (!confirm("Are you sure you want to delete this payment?")) {
+    if (!confirm("Excluir este pagamento?")) {
       return;
     }
     startTransition(async () => {
@@ -33,73 +33,67 @@ export function PaymentCard({ payment, onEdit }: PaymentCardProps) {
 
   return (
     <div
-      className={`group relative rounded-2xl border bg-card p-4 transition-all ${
+      className={`group flex items-center gap-3 rounded-lg border px-3.5 py-3 transition-colors ${
         optimisticPaid
-          ? "border-success/30 bg-success-light/30"
-          : "border-card-border hover:border-primary/30 hover:shadow-sm"
+          ? "border-border bg-muted-light/50"
+          : "border-border bg-card hover:border-muted"
       }`}
     >
-      <div className="flex items-start justify-between gap-3">
-        <div className="flex items-start gap-3">
-          <button
-            onClick={handleTogglePaid}
-            disabled={isPending}
-            className={`mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border-2 transition-all ${
-              optimisticPaid
-                ? "border-success bg-success text-white"
-                : "border-card-border hover:border-primary"
+      <button
+        onClick={handleTogglePaid}
+        disabled={isPending}
+        className={`flex h-5 w-5 shrink-0 items-center justify-center rounded border transition-all ${
+          optimisticPaid
+            ? "border-success bg-success text-white"
+            : "border-muted/40 hover:border-foreground"
+        }`}
+        aria-label={optimisticPaid ? "Marcar como não pago" : "Marcar como pago"}
+      >
+        {optimisticPaid && <Check className="h-3 w-3" strokeWidth={3} />}
+      </button>
+
+      <div className="min-w-0 flex-1">
+        <div className="flex items-baseline justify-between gap-2">
+          <p
+            className={`truncate text-sm font-medium ${
+              optimisticPaid ? "text-muted line-through" : "text-foreground"
             }`}
-            aria-label={optimisticPaid ? "Mark as unpaid" : "Mark as paid"}
           >
-            {optimisticPaid && <Check className="h-3.5 w-3.5" />}
-          </button>
-          <div>
-            <p
-              className={`font-medium ${
-                optimisticPaid
-                  ? "text-muted line-through"
-                  : "text-foreground"
-              }`}
-            >
-              {payment.description}
-            </p>
-            <div className="mt-1 flex flex-wrap items-center gap-2">
-              <span className="flex items-center gap-1 text-xs text-muted">
-                <Calendar className="h-3 w-3" />
-                Day {payment.dueDay}
-              </span>
-              {payment.category && (
-                <span className="rounded-full bg-primary-light px-2 py-0.5 text-xs font-medium text-primary">
-                  {payment.category}
-                </span>
-              )}
-            </div>
-          </div>
+            {payment.description}
+          </p>
+          <p
+            className={`shrink-0 text-sm tabular-nums ${
+              optimisticPaid ? "text-muted" : "font-semibold text-foreground"
+            }`}
+          >
+            {formatCurrency(payment.amount)}
+          </p>
         </div>
-        <p
-          className={`shrink-0 text-right text-base font-bold ${
-            optimisticPaid ? "text-muted" : "text-foreground"
-          }`}
-        >
-          {formatCurrency(payment.amount)}
-        </p>
+        <div className="mt-0.5 flex items-center gap-2">
+          <span className="text-xs text-muted">Dia {payment.dueDay}</span>
+          {payment.category && (
+            <span className="rounded bg-muted-light px-1.5 py-0.5 text-[10px] font-medium text-muted">
+              {payment.category}
+            </span>
+          )}
+        </div>
       </div>
 
-      <div className="mt-3 flex justify-end gap-1 opacity-0 transition-opacity group-hover:opacity-100">
+      <div className="flex shrink-0 gap-0.5 opacity-0 transition-opacity group-hover:opacity-100">
         <button
           onClick={() => onEdit(payment)}
-          className="flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-xs text-muted transition-colors hover:bg-muted-light hover:text-foreground"
+          className="rounded-md p-1.5 text-muted transition-colors hover:bg-muted-light hover:text-foreground"
+          aria-label="Editar"
         >
-          <Pencil className="h-3 w-3" />
-          Edit
+          <Pencil className="h-3.5 w-3.5" />
         </button>
         <button
           onClick={handleDelete}
           disabled={isPending}
-          className="flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-xs text-danger transition-colors hover:bg-danger-light disabled:opacity-50"
+          className="rounded-md p-1.5 text-muted transition-colors hover:bg-danger-light hover:text-danger disabled:opacity-50"
+          aria-label="Excluir"
         >
-          <Trash2 className="h-3 w-3" />
-          Delete
+          <Trash2 className="h-3.5 w-3.5" />
         </button>
       </div>
     </div>

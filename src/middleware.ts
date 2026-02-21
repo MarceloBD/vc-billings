@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { jwtVerify } from "jose";
 
-const SESSION_COOKIE_NAME = "vc-billings-session";
+const SESSION_COOKIE_NAME = "payflow-session";
 
 const PROTECTED_PATHS = ["/dashboard"];
 const PUBLIC_PATHS = ["/login"];

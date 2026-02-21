@@ -21,8 +21,8 @@ export default async function DashboardPage({
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      <main className="mx-auto max-w-5xl space-y-6 px-4 py-6 sm:px-6">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <main className="mx-auto max-w-3xl space-y-6 px-4 py-6 sm:px-6">
+        <div className="flex items-center justify-between">
           <Suspense fallback={null}>
             <MonthSelector currentMonth={currentMonth} />
           </Suspense>
@@ -33,7 +33,6 @@ export default async function DashboardPage({
         </div>
 
         <SummaryBar payments={payments} />
-
         <PaymentList payments={payments} currentMonth={currentMonth} />
       </main>
     </div>

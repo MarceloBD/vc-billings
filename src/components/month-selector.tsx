@@ -23,20 +23,20 @@ export function MonthSelector({ currentMonth }: MonthSelectorProps) {
   }
 
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center gap-1">
       <button
         onClick={() => navigateToMonth(getPreviousMonth(currentMonth))}
-        className="flex h-9 w-9 items-center justify-center rounded-xl border border-card-border bg-card text-muted transition-colors hover:bg-muted-light hover:text-foreground"
+        className="flex h-8 w-8 items-center justify-center rounded-lg text-muted transition-colors hover:bg-muted-light hover:text-foreground"
         aria-label="Previous month"
       >
         <ChevronLeft className="h-4 w-4" />
       </button>
-      <span className="min-w-[160px] text-center text-sm font-semibold text-foreground">
+      <span className="min-w-[140px] text-center text-sm font-medium text-foreground">
         {formatMonthLabel(currentMonth)}
       </span>
       <button
         onClick={() => navigateToMonth(getNextMonth(currentMonth))}
-        className="flex h-9 w-9 items-center justify-center rounded-xl border border-card-border bg-card text-muted transition-colors hover:bg-muted-light hover:text-foreground"
+        className="flex h-8 w-8 items-center justify-center rounded-lg text-muted transition-colors hover:bg-muted-light hover:text-foreground"
         aria-label="Next month"
       >
         <ChevronRight className="h-4 w-4" />

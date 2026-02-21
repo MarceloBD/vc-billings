@@ -8,8 +8,8 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "VC Billings",
-  description: "Personal monthly payment tracker",
+  title: "Payflow",
+  description: "Controle seus pagamentos mensais",
 };
 
 export default function RootLayout({
@@ -18,7 +18,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="pt-BR">
       <body className={`${inter.variable} font-sans antialiased`}>
         {children}
       </body>

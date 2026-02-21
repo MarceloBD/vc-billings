@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Plus, Inbox } from "lucide-react";
+import { Plus } from "lucide-react";
 import type { Payment } from "@/lib/db/schema";
 import { PaymentCard } from "./payment-card";
 import { PaymentForm } from "./payment-form";
@@ -33,24 +33,17 @@ export function PaymentList({ payments, currentMonth }: PaymentListProps) {
   return (
     <>
       {payments.length === 0 ? (
-        <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-card-border bg-card px-6 py-16 text-center">
-          <Inbox className="mb-3 h-12 w-12 text-muted/40" />
-          <p className="text-sm font-medium text-muted">
-            No payments for this month
-          </p>
-          <p className="mt-1 text-xs text-muted/70">
-            Add your first payment or duplicate from another month
-          </p>
+        <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-border py-16 text-center">
+          <p className="text-sm text-muted">Nenhum pagamento ainda</p>
           <button
             onClick={handleAddNew}
-            className="mt-4 flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-primary-hover"
+            className="mt-3 rounded-lg bg-foreground px-3.5 py-2 text-sm font-medium text-white transition-opacity hover:opacity-80"
           >
-            <Plus className="h-4 w-4" />
-            Add Payment
+            Adicionar pagamento
           </button>
         </div>
       ) : (
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="space-y-2">
           {payments.map((payment) => (
             <PaymentCard
               key={payment.id}
@@ -64,10 +57,10 @@ export function PaymentList({ payments, currentMonth }: PaymentListProps) {
       {payments.length > 0 && (
         <button
           onClick={handleAddNew}
-          className="fixed bottom-6 right-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-primary text-white shadow-lg shadow-primary/25 transition-all hover:bg-primary-hover hover:shadow-xl hover:shadow-primary/30"
-          aria-label="Add payment"
+          className="fixed bottom-6 right-6 flex h-12 w-12 items-center justify-center rounded-full bg-foreground text-white shadow-lg transition-all hover:opacity-80 hover:shadow-xl"
+          aria-label="Adicionar pagamento"
         >
-          <Plus className="h-6 w-6" />
+          <Plus className="h-5 w-5" />
         </button>
       )}
 
