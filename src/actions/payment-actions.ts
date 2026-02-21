@@ -5,6 +5,22 @@ import { revalidatePath } from "next/cache";
 import { getDatabase } from "@/lib/db";
 import { payments } from "@/lib/db/schema";
 import { getNextMonth } from "@/lib/month-helpers";
+import { getClientIpAddress } from "@/lib/client-ip";
+import {
+  checkDailyRateLimit,
+  recordDailyAction,
+} from "@/lib/daily-rate-limit";
+
+async function enforceRateLimit() {
+  const ipAddress = await getClientIpAddress();
+  const { allowed } = checkDailyRateLimit(ipAddress);
+
+  if (!allowed) {
+    throw new Error("Limite diário de ações atingido. Tente novamente amanhã.");
+  }
+
+  recordDailyAction(ipAddress);
+}
 
 export async function getPaymentsByMonth(month: string) {
   const database = getDatabase();
@@ -16,6 +32,7 @@ export async function getPaymentsByMonth(month: string) {
 }
 
 export async function createPayment(formData: FormData) {
+  await enforceRateLimit();
   const database = getDatabase();
   const description = formData.get("description") as string;
   const amount = formData.get("amount") as string;
@@ -36,6 +53,7 @@ export async function createPayment(formData: FormData) {
 }
 
 export async function updatePayment(formData: FormData) {
+  await enforceRateLimit();
   const database = getDatabase();
   const id = parseInt(formData.get("id") as string, 10);
   const description = formData.get("description") as string;
@@ -58,12 +76,14 @@ export async function updatePayment(formData: FormData) {
 }
 
 export async function deletePayment(paymentId: number) {
+  await enforceRateLimit();
   const database = getDatabase();
   await database.delete(payments).where(eq(payments.id, paymentId));
   revalidatePath("/dashboard");
 }
 
 export async function togglePaymentPaid(paymentId: number, isPaid: boolean) {
+  await enforceRateLimit();
   const database = getDatabase();
   await database
     .update(payments)
@@ -76,6 +96,7 @@ export async function togglePaymentPaid(paymentId: number, isPaid: boolean) {
 export async function duplicateMonthPayments(
   sourceMonth: string
 ): Promise<{ success: boolean; message: string }> {
+  await enforceRateLimit();
   const database = getDatabase();
   const targetMonth = getNextMonth(sourceMonth);
 

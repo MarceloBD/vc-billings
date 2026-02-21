@@ -1,7 +1,6 @@
 "use server";
 
 import { compare } from "bcryptjs";
-import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import {
   createSessionToken,
@@ -13,18 +12,10 @@ import {
   recordFailedAttempt,
   resetAttempts,
 } from "@/lib/rate-limit";
+import { getClientIpAddress } from "@/lib/client-ip";
 
 interface LoginResult {
   error?: string;
-}
-
-async function getClientIpAddress(): Promise<string> {
-  const headersList = await headers();
-  return (
-    headersList.get("x-forwarded-for")?.split(",")[0]?.trim() ??
-    headersList.get("x-real-ip") ??
-    "unknown"
-  );
 }
 
 export async function loginAction(
