@@ -1,5 +1,5 @@
 {
-  "buildCommand": "drizzle-kit push && next build",
+  "buildCommand": "drizzle-kit migrate && next build",
   "crons": [
     {
       "path": "/api/cron/clean-database",
