@@ -35,7 +35,7 @@ Track your monthly payments, mark them as paid, see totals at a glance, and dupl
 ### 1. Clone and install
 
 ```bash
-git clone https://github.com/your-username/vc-billings.git
+git clone https://github.com/MarceloBD/vc-billings.git
 cd vc-billings
 npm install
 ```
